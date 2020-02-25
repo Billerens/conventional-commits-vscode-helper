@@ -68,27 +68,5 @@ def main():
     else: 
         print("<HEAD> has an error!: Check from ", currentPosition, " position. Has more then 52 symbols.")
 
-
-
-
-
-
-
-
-
-
-    if headerRegexType == None: raise Exception("Check your <header> part!")
-    if len(lines) > 3:
-        if lines[1] != '\n':
-            print("2nd strings should be empty if you message have <body> part or you haven't delete Git comments!")
-    counter = -1
-    for line in lines:
-        counter = counter + 1
-        if counter >= 2:
-            bodyRegex = re.match(patternBody, line)
-            if bodyRegex == None: raise Exception("Line ", counter, " has more then 72 symbols.")
-
-
-
 if __name__ == "__main__":
     main()
