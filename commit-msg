@@ -1,0 +1,94 @@
+#!/usr/bin/env python3
+import re, sys, os
+
+def main():
+    buffered = ''
+    counter = -1
+    currentPosition = 0
+
+    patternHeaderType = r'^(build|ci|docs|feat|fix|perf|refactor|style|test|chore|revert)'
+    patternHeaderScope = r'(?:\(([^\)\s]+)\))?'
+    patternHeaderImportant = r'!?'
+    patternHeaderMessage = r': (?!(?:.* ){1})([<>!? ,.\-_a-zA-Z0-9]{0,52})'
+    patternHeaderEnd = r'^\n'
+
+    patternBody = r'^(.){0,72}(\n)'
+
+    filename = sys.argv[1]
+    lines = open(filename, 'r').readlines()
+
+    for line in lines:
+        counter = counter + 1
+        if line == '\n' and line == buffered:
+            print("2 free strings in a row! Found in ", counter ," line ")
+        else: buffered = line
+
+    #TYPE CHECK
+    print(lines[0])
+    headerRegexType = re.match(patternHeaderType, lines[0])
+    if headerRegexType != None:
+        print("<TYPE> ends on: ", headerRegexType.span()[1], " position. Is correct.")
+        currentPosition += headerRegexType.span()[1]
+    else: 
+        print("<TYPE> has an error!: Check from 1st position.")
+
+    #SCOPE CHECK
+    print(lines[0][headerRegexType.span()[1]:len(lines[0])])
+    headerRegexScope = re.match(patternHeaderScope, lines[0][headerRegexType.span()[1]:len(lines[0])])
+    if headerRegexScope != None:
+        print("<SCOPE> ends on: ", currentPosition + headerRegexScope.span()[1], " position. Is correct.")
+        currentPosition += headerRegexScope.span()[1]
+    else: 
+        print("<SCOPE> has an error!: Check from ", headerRegexType.span()[1], " position.")
+
+    #IMPORTANT CHECK
+    print(lines[0][currentPosition:len(lines[0])])
+    headerRegexImportant = re.match(patternHeaderImportant, lines[0][currentPosition:len(lines[0])])
+    if headerRegexImportant != None:
+        print("!IMPORTANT! ends on: ", currentPosition + headerRegexImportant.span()[1], " position. Is correct.")
+        currentPosition += headerRegexImportant.span()[1]
+    else: 
+        print("!IMPORTANT! has an error!: Check from ", currentPosition - headerRegexScope.span()[1], " position.")
+
+    #MESSAGE CHECK
+    print(lines[0][currentPosition:len(lines[0])])
+    headerRegexMessage = re.match(patternHeaderMessage, lines[0][currentPosition:len(lines[0])])
+    if headerRegexMessage != None:
+        print("<MESSAGE> ends on: ", currentPosition + headerRegexMessage.span()[1], " position. Is correct.")
+        currentPosition += headerRegexMessage.span()[1]
+    else: 
+        print("<MESSAGE> has an error!: Check from ", currentPosition - headerRegexImportant.span()[1], " position.")
+
+    #LENGTH CHECK
+    print(lines[0][currentPosition:len(lines[0])])
+    headerRegexEnd = re.match(patternHeaderEnd, lines[0][currentPosition:len(lines[0])])
+    if headerRegexEnd != None:
+        print("<HEAD> ends on: ", currentPosition + headerRegexEnd.span()[1], " position. Is correct.")
+        currentPosition += headerRegexEnd.span()[1]
+    else: 
+        print("<HEAD> has an error!: Check from ", currentPosition, " position. Has more then 52 symbols.")
+
+
+
+
+
+
+
+
+
+
+    if headerRegexType == None: raise Exception("Check your <header> part!")
+    if len(lines) > 3:
+        if lines[1] != '\n':
+            print("2nd strings should be empty if you message have <body> part or you haven't delete Git comments!")
+    counter = -1
+    for line in lines:
+        counter = counter + 1
+        if counter >= 2:
+            bodyRegex = re.match(patternBody, line)
+            if bodyRegex == None: raise Exception("Line ", counter, " has more then 72 symbols.")
+
+
+
+if __name__ == "__main__":
+    main()
