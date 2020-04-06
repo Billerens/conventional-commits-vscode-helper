@@ -1,0 +1,67 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Conventional Commits",
+  "patterns": [
+    { "include": "#comment" },
+    {
+      "begin": "^",
+      "end": ":",
+      "patterns": [
+        {
+          "include": "#type"
+        },
+        {
+          "include": "#scope"
+        }
+      ]
+    },
+    {
+      "begin": "(?<=:)[ ]",
+      "end": "$",
+      "name": "entity.name.namespace",
+      "patterns": [
+        {
+          "include": "#link-to-commit"
+        },
+        {
+          "match": "(?<=^.{51}).*",
+          "name": "invalid.deprecated.line-too-long"
+        }
+      ]
+    }
+  ],
+  "repository": {
+    "expression": {
+      "patterns": [
+        { "include": "#comment" },
+        { "include": "#type" },
+        { "include": "#link-to-commit" },
+        { "include": "#scope" }
+      ]
+    },
+    "comment": {
+      "begin": "^(#)",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.comment.git-commit"
+        }
+      },
+      "end": "\\n",
+      "name": "comment.line.number-sign.git-commit"
+    },
+    "type": {
+      "match": "^(!)?(build|ci|docs|feat|fix|perf|refactor|style|test|chore|revert)(?=([(]|:))",
+      "name": "keyword.control"
+    },
+    "scope": {
+      "match": "[(].*[)](?=:)",
+      "name": "keyword.operator.new"
+    },
+    "link-to-commit": {
+      "begin": "#",
+      "end": "[0-9]*",
+      "name": "keyword.link-to-commit"
+    }
+  },
+  "scopeName": "text.git-commit"
+}

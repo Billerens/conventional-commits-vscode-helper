@@ -1,0 +1,25 @@
+{
+    "name": "conventional-commits",
+    "displayName": "Conventional Commits",
+    "description": "",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.43.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "convcommits",
+            "aliases": ["Conventional Commits", "convcommits"],
+            "extensions": [""],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "convcommits",
+            "scopeName": "text.git-commit",
+            "path": "./syntaxes/convcommits.tmLanguage.json"
+        }]
+    }
+}
